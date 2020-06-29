@@ -22,6 +22,7 @@ public class LocaleUtils {
 
     /**
      * 获取用户设置的Locale
+     *
      * @param pContext Context
      * @return Locale
      */
@@ -30,8 +31,10 @@ public class LocaleUtils {
         String _LocaleJson = _SpLocale.getString(LOCALE_KEY, "");
         return jsonToLocale(_LocaleJson);
     }
+
     /**
      * 获取当前的Locale
+     *
      * @param pContext Context
      * @return Locale
      */
@@ -44,20 +47,24 @@ public class LocaleUtils {
         }
         return _Locale;
     }
+
     /**
      * 保存用户设置的Locale
-     * @param pContext Context
+     *
+     * @param pContext    Context
      * @param pUserLocale Locale
      */
     public static void saveUserLocale(Context pContext, Locale pUserLocale) {
-        SharedPreferences _SpLocal=pContext.getSharedPreferences(LOCALE_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor _Edit=_SpLocal.edit();
+        SharedPreferences _SpLocal = pContext.getSharedPreferences(LOCALE_FILE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor _Edit = _SpLocal.edit();
         String _LocaleJson = localeToJson(pUserLocale);
         _Edit.putString(LOCALE_KEY, _LocaleJson);
         _Edit.apply();
     }
+
     /**
      * Locale转成json
+     *
      * @param pUserLocale UserLocale
      * @return json String
      */
@@ -65,8 +72,10 @@ public class LocaleUtils {
         Gson _Gson = new Gson();
         return _Gson.toJson(pUserLocale);
     }
+
     /**
      * json转成Locale
+     *
      * @param pLocaleJson LocaleJson
      * @return Locale
      */
@@ -74,9 +83,11 @@ public class LocaleUtils {
         Gson _Gson = new Gson();
         return _Gson.fromJson(pLocaleJson, Locale.class);
     }
+
     /**
      * 更新Locale
-     * @param pContext Context
+     *
+     * @param pContext       Context
      * @param pNewUserLocale New User Locale
      */
     public static void updateLocale(Context pContext, Locale pNewUserLocale) {
@@ -85,20 +96,44 @@ public class LocaleUtils {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 _Configuration.setLocale(pNewUserLocale);
             } else {
-                _Configuration.locale =pNewUserLocale;
+                _Configuration.locale = pNewUserLocale;
             }
             DisplayMetrics _DisplayMetrics = pContext.getResources().getDisplayMetrics();
             pContext.getResources().updateConfiguration(_Configuration, _DisplayMetrics);
             saveUserLocale(pContext, pNewUserLocale);
         }
     }
+
     /**
      * 判断需不需要更新
-     * @param pContext Context
+     *
+     * @param pContext       Context
      * @param pNewUserLocale New User Locale
      * @return true / false
      */
     public static boolean needUpdateLocale(Context pContext, Locale pNewUserLocale) {
         return pNewUserLocale != null && !getCurrentLocale(pContext).equals(pNewUserLocale);
     }
+
+    /**
+     * 在应用内切换了语言
+     *
+     * @param ctx
+     * @param newConfig
+     */
+    public static void onConfigurationChanged(Context ctx, Configuration newConfig) {
+        Locale _UserLocale = getUserLocale(ctx);
+        //系统语言改变了应用保持之前设置的语言
+        if (_UserLocale != null) {
+            Locale.setDefault(_UserLocale);
+            Configuration _Configuration = new Configuration(newConfig);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                _Configuration.setLocale(_UserLocale);
+            } else {
+                _Configuration.locale = _UserLocale;
+            }
+            ctx.getResources().updateConfiguration(_Configuration, ctx.getResources().getDisplayMetrics());
+        }
+    }
+
 }
