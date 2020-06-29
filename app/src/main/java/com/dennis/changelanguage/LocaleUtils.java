@@ -136,4 +136,13 @@ public class LocaleUtils {
         }
     }
 
+    /**
+     * 初始化
+     * @param ctx
+     */
+    public static void initLocale(Context ctx){
+        Locale _UserLocale= getUserLocale(this);
+        LocaleUtils.updateLocale(ctx, _UserLocale);
+    }
+
 }
