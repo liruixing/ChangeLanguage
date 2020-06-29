@@ -141,7 +141,7 @@ public class LocaleUtils {
      * @param ctx
      */
     public static void initLocale(Context ctx){
-        Locale _UserLocale= getUserLocale(this);
+        Locale _UserLocale= getUserLocale(ctx);
         LocaleUtils.updateLocale(ctx, _UserLocale);
     }
 
