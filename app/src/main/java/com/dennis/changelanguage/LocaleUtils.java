@@ -145,6 +145,4 @@ public class LocaleUtils {
         LocaleUtils.updateLocale(ctx, _UserLocale);
     }
 
-
-
 }
